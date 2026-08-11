@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: xitcoin_blockscout
+      POSTGRES_USER: xitcoin_blockscout
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - blockscout_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xitcoin_blockscout -d xitcoin_blockscout"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - blockscout_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+
+  backend:
+    image: ghcr.io/blockscout/blockscout:9.0.2
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()" && bin/blockscout start
+    environment:
+      DATABASE_URL: postgresql://xitcoin_blockscout:${POSTGRES_PASSWORD}@db:5432/xitcoin_blockscout
+      ECTO_USE_SSL: "false"
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      ETHEREUM_JSONRPC_VARIANT: geth
+      ETHEREUM_JSONRPC_TRANSPORT: http
+      ETHEREUM_JSONRPC_HTTP_URL: https://evm-rpc-testnet.xitcoin.org
+      CHAIN_ID: "101089"
+      NETWORK: Xitcoin
+      SUBNETWORK: Testnet
+      BLOCKSCOUT_HOST: evm-explorer-testnet.xitcoin.org
+      BLOCKSCOUT_PROTOCOL: https
+      REDIS_URL: redis://redis:6379
+      INDEXER_BLOCK_RANGE: "1000"
+      INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
+      INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
+      DISABLE_EXCHANGE_RATES: "false"
+      MARKET_COINGECKO_COIN_ID: "xitcoin"
+    ports:
+      - "127.0.0.1:14000:4000"
+
+volumes:
+  blockscout_db:
+  blockscout_redis:

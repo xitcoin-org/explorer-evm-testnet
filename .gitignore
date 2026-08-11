@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.log
+data/
+dets/
+logs/
+blockscout-db-data/

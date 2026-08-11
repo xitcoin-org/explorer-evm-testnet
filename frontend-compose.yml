@@ -1,0 +1,22 @@
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_HOMEPAGE_STATS: '["total_blocks","average_block_time","total_txs","wallet_addresses"]'
+      NEXT_PUBLIC_AD_BANNER_PROVIDER: "none"
+      NEXT_PUBLIC_API_HOST: evm-explorer-testnet.xitcoin.org
+      NEXT_PUBLIC_API_PROTOCOL: https
+      NEXT_PUBLIC_API_BASE_PATH: /
+      NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: wss
+      NEXT_PUBLIC_APP_HOST: evm-explorer-testnet.xitcoin.org
+      NEXT_PUBLIC_APP_PROTOCOL: https
+      NEXT_PUBLIC_NETWORK_NAME: Xitcoin Testnet
+      NEXT_PUBLIC_NETWORK_SHORT_NAME: Xitcoin Testnet
+      NEXT_PUBLIC_NETWORK_ID: "101089"
+      NEXT_PUBLIC_NETWORK_CURRENCY_NAME: Xitcoin
+      NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL: XTC
+      NEXT_PUBLIC_NETWORK_CURRENCY_DECIMALS: "18"
+      NEXT_PUBLIC_IS_TESTNET: "true"
+    ports:
+      - "127.0.0.1:14001:3000"
