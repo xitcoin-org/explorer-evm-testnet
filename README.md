@@ -42,3 +42,7 @@ The public API reference is stored at [`docs/api/xitcoin-testnet-api-v2.json`](d
 ## Upstream
 
 The explorer uses Blockscout. Xitcoin configuration is maintained separately from upstream source code so deployments remain reproducible and upgrades can be reviewed independently.
+
+## Licence
+
+Original Xitcoin-authored configuration and documentation are available under the [MIT License](LICENSE). Blockscout images and other third-party components retain their upstream terms; see [third-party notices](THIRD_PARTY_NOTICES.md).
