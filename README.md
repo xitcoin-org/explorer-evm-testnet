@@ -1,24 +1,44 @@
 # Xitcoin EVM Testnet Explorer
 
-Versioned deployment configuration and frontend branding for the Xitcoin EVM
-testnet explorer powered by Blockscout.
+Reproducible Blockscout configuration and Xitcoin branding for the public EVM explorer.
 
-Public endpoint: https://evm-explorer-testnet.xitcoin.org/
+## Network
 
-## Scope
+| Property | Value |
+|---|---|
+| Network | Xitcoin Testnet |
+| EVM chain ID | `101089` |
+| Native currency | XTC |
+| Decimals | 18 |
+| Explorer | https://evm-explorer-testnet.xitcoin.org/ |
+| JSON-RPC | https://evm-rpc-testnet.xitcoin.org/ |
 
-- EVM chain ID: `101089`
-- Native currency: XTC
-- Isolated Docker Compose project: `xitcoin_blockscout_testnet`
-- Dedicated PostgreSQL and Redis Docker volumes
+Cosmos-style and EVM-style addresses coexist on Xitcoin Testnet. This does not imply a bridge or a second token: XTC is the native asset exposed through both interfaces.
 
-## Security
+## Configuration
 
-The real `.env` remains only on the server and contains deployment secrets.
-Never commit keys, passwords, certificates, Docker volumes or backups.
+Create the local environment file, provide the required deployment values, then validate the complete Compose configuration:
+
+```bash
+cp .env.example .env
+
+docker compose \
+  --env-file .env \
+  -f docker-compose.yml \
+  -f frontend-compose.yml \
+  config
+```
+
+The `.env` file is excluded from version control. Runtime secrets are supplied by the deployment environment.
 
 ## Branding
 
-Frontend environment configuration is versioned here. Deep CSS or logo work
-must be performed through a versioned frontend source/fork, never by editing a
-running container.
+Official logo assets are loaded from [`xitcoin-org/brand`](https://github.com/xitcoin-org/brand). Token and contract references are maintained in [`xitcoin-org/contracts`](https://github.com/xitcoin-org/contracts).
+
+## API
+
+The public API reference is stored at [`docs/api/xitcoin-testnet-api-v2.json`](docs/api/xitcoin-testnet-api-v2.json).
+
+## Upstream
+
+The explorer uses Blockscout. Xitcoin configuration is maintained separately from upstream source code so deployments remain reproducible and upgrades can be reviewed independently.

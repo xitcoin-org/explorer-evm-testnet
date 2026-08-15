@@ -27,7 +27,7 @@ services:
       retries: 18
 
   backend:
-    image: ghcr.io/blockscout/blockscout:9.0.2
+    image: xitcoin-blockscout-backend:v11.2.6
     restart: unless-stopped
     depends_on:
       db:
@@ -41,6 +41,7 @@ services:
     environment:
       DATABASE_URL: postgresql://xitcoin_blockscout:${POSTGRES_PASSWORD}@db:5432/xitcoin_blockscout
       ECTO_USE_SSL: "false"
+      ECTO_SSL_MODE: disable
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       ETHEREUM_JSONRPC_VARIANT: geth
       ETHEREUM_JSONRPC_TRANSPORT: http
@@ -55,7 +56,10 @@ services:
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       DISABLE_EXCHANGE_RATES: "false"
+      POOL_SIZE: "20"
+      POOL_SIZE_API: "20"
       MARKET_COINGECKO_COIN_ID: "xitcoin"
+      MARKET_HISTORY_FETCHER_ENABLED: "false"
     ports:
       - "127.0.0.1:14000:4000"
 

@@ -3,11 +3,18 @@ services:
     image: ${FRONTEND_IMAGE}
     restart: unless-stopped
     environment:
+      NEXT_PUBLIC_OTHER_LINKS: '[{"text":"XTC (Cronos)","url":"https://explorer.cronos.com/address/0xE45FE733BC8617FA6DAC8437FC44B5FFFA949991"}]'
+      NEXT_PUBLIC_GAS_TRACKER_ENABLED: "false"
+      NEXT_PUBLIC_WEB3_WALLETS: '["metamask"]'
+      NEXT_PUBLIC_NETWORK_LOGO: "https://raw.githubusercontent.com/xitcoin-org/brand/main/assets/png/standard/xitcoin-symbol-500.png"
+      NEXT_PUBLIC_NETWORK_ICON: "https://raw.githubusercontent.com/xitcoin-org/brand/main/assets/png/standard/xitcoin-symbol-200.png"
+      FAVICON_MASTER_URL: "https://raw.githubusercontent.com/xitcoin-org/brand/main/assets/png/standard/xitcoin-symbol-500.png"
       NEXT_PUBLIC_HOMEPAGE_STATS: '["total_blocks","average_block_time","total_txs","wallet_addresses"]'
       NEXT_PUBLIC_AD_BANNER_PROVIDER: "none"
       NEXT_PUBLIC_API_HOST: evm-explorer-testnet.xitcoin.org
       NEXT_PUBLIC_API_PROTOCOL: https
       NEXT_PUBLIC_API_BASE_PATH: /
+      NEXT_PUBLIC_API_DOCS_TABS: '["rest_api"]'
       NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: wss
       NEXT_PUBLIC_APP_HOST: evm-explorer-testnet.xitcoin.org
       NEXT_PUBLIC_APP_PROTOCOL: https

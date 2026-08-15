@@ -1,0 +1,126 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Xitcoin Testnet Explorer API",
+    "version": "2.0",
+    "description": "Public REST API for the Xitcoin EVM testnet explorer. EVM chain ID: 101089."
+  },
+  "servers": [
+    {
+      "url": "https://evm-explorer-testnet.xitcoin.org/api/v2",
+      "description": "Xitcoin EVM testnet"
+    }
+  ],
+  "paths": {
+    "/stats": {
+      "get": {
+        "summary": "Explorer statistics",
+        "responses": {
+          "200": {
+            "description": "Current explorer statistics"
+          }
+        }
+      }
+    },
+    "/blocks": {
+      "get": {
+        "summary": "List indexed blocks",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "block"
+          },
+          {
+            "name": "items_count",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indexed block list"
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "summary": "List indexed transactions",
+        "parameters": [
+          {
+            "name": "items_count",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indexed transaction list"
+          }
+        }
+      }
+    },
+    "/tokens": {
+      "get": {
+        "summary": "List indexed tokens",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "ERC-20"
+          },
+          {
+            "name": "items_count",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indexed token list"
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Search addresses, blocks, transactions and tokens",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Xitcoin address, transaction hash, block number or token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          },
+          "400": {
+            "description": "Invalid search query"
+          }
+        }
+      }
+    }
+  }
+}
