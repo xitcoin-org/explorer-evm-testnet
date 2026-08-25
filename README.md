@@ -15,7 +15,7 @@ Reproducible Blockscout configuration and Xitcoin branding for the public EVM ex
 
 Cosmos-style and EVM-style addresses coexist on Xitcoin Testnet. This does not imply a bridge or a second token: XTC is the native asset exposed through both interfaces.
 
-Canonical network identity is maintained in [`xitcoin-org/pos-chain`](https://github.com/xitcoin-org/pos-chain).
+Canonical public network configuration is maintained in [`xitcoin-org/testnets`](https://github.com/xitcoin-org/testnets). Node software is maintained in [`xitcoin-org/pos-chain`](https://github.com/xitcoin-org/pos-chain).
 
 ## Configuration
 
