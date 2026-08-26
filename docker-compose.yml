@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:17@sha256:0b657ff48d7f76a1e907f381b1693eb4f2bf54c1d2df4feb6743d7dc601768dd
     restart: unless-stopped
     environment:
       POSTGRES_DB: xitcoin_blockscout
@@ -15,7 +15,7 @@ services:
       retries: 18
 
   redis:
-    image: redis:7-alpine
+    image: redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
@@ -27,7 +27,7 @@ services:
       retries: 18
 
   backend:
-    image: xitcoin-blockscout-backend:v11.2.6
+    image: ghcr.io/xitcoin-org/blockscout-backend:v11.2.7@sha256:ec76d243778910c84c786e0fba1aa386c12091b83e395e15b52464527057a55a
     restart: unless-stopped
     depends_on:
       db:
