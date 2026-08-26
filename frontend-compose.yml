@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ${FRONTEND_IMAGE}
+    image: ghcr.io/xitcoin-org/blockscout-frontend:v2.10.3@sha256:4c9384b7e9a2cc38f69766e89ef7c37252612a86f38a18f4ffeff2da26cbd9cc
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_OTHER_LINKS: '[{"text":"XTC (Cronos)","url":"https://explorer.cronos.com/address/0xE45FE733BC8617FA6DAC8437FC44B5FFFA949991"}]'
