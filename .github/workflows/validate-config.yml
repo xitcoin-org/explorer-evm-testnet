@@ -1,0 +1,69 @@
+name: Validate explorer configuration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-explorer-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Compose and security invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Prepare non-secret validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .env <<'ENV'
+          FRONTEND_IMAGE=ghcr.io/xitcoin-org/blockscout-frontend:validation
+          POSTGRES_PASSWORD=validation-only-not-a-secret
+          SECRET_KEY_BASE=validation-only-not-a-secret
+          ENV
+
+      - name: Validate merged Compose configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose             --env-file .env             -f docker-compose.yml             -f frontend-compose.yml             config --quiet
+
+      - name: Validate security invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"127.0.0.1:14000:4000"' docker-compose.yml
+          grep -Fq '"127.0.0.1:14001:3000"' frontend-compose.yml
+          grep -Fq '${POSTGRES_PASSWORD}' docker-compose.yml
+          grep -Fq '${SECRET_KEY_BASE}' docker-compose.yml
+
+          if grep -R -nE             'privileged:[[:space:]]*true|network_mode:[[:space:]]*host'             --include='*.yml'             --include='*.yaml'             .
+          then
+            echo "Forbidden container privilege detected"
+            exit 1
+          fi
+
+          if grep -R -nE             'uses:[[:space:]]+[^[:space:]]+@(main|master|latest|v[0-9]+)$'             .github/workflows
+          then
+            echo "Unpinned GitHub Action detected"
+            exit 1
+          fi
+
+      - name: Remove validation environment
+        if: always()
+        shell: bash
+        run: rm -f .env

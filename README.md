@@ -41,6 +41,10 @@ Official logo assets are loaded from [`xitcoin-org/brand`](https://github.com/xi
 
 The public API reference is stored at [`docs/api/xitcoin-testnet-api-v2.json`](docs/api/xitcoin-testnet-api-v2.json).
 
+## Image provenance
+
+Image source commits, build parameters, SBOMs and provenance attestations are documented in [`docs/BLOCKSCOUT_IMAGE_PROVENANCE.md`](docs/BLOCKSCOUT_IMAGE_PROVENANCE.md).
+
 ## Upstream
 
 The explorer uses Blockscout. Xitcoin configuration is maintained separately from upstream source code so deployments remain reproducible and upgrades can be reviewed independently.

@@ -1,0 +1,148 @@
+name: Build traceable Blockscout images
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: blockscout-release-images
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/xitcoin-org/blockscout-backend
+  FRONTEND_IMAGE: ghcr.io/xitcoin-org/blockscout-frontend
+  BACKEND_VERSION: 11.2.7
+  BACKEND_TAG: v11.2.7
+  BACKEND_COMMIT: c60abc6d680a151abce634649283cf2934fee503
+  FRONTEND_TAG: v2.10.3
+  FRONTEND_COMMIT: 10d8428db2f3b5a832640ea2e68ddcc33eff3a49
+
+jobs:
+  build:
+    name: Build and publish immutable images
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout deployment repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Checkout official Blockscout backend source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: blockscout/blockscout
+          ref: c60abc6d680a151abce634649283cf2934fee503
+          path: upstream/backend
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Verify backend source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C upstream/backend rev-parse HEAD)" = "$BACKEND_COMMIT"
+          test -f upstream/backend/docker/Dockerfile
+
+      - name: Checkout official Blockscout frontend source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: blockscout/frontend
+          ref: 10d8428db2f3b5a832640ea2e68ddcc33eff3a49
+          path: upstream/frontend
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Verify frontend source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C upstream/frontend rev-parse HEAD)" = "$FRONTEND_COMMIT"
+          test -f upstream/frontend/Dockerfile
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+
+      - name: Authenticate to GitHub Container Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish backend
+        id: backend
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
+        with:
+          context: upstream/backend
+          file: upstream/backend/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: mode=max
+          sbom: true
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:${{ env.BACKEND_TAG }}
+            ${{ env.BACKEND_IMAGE }}:${{ env.BACKEND_COMMIT }}
+          labels: |
+            org.opencontainers.image.title=Xitcoin Blockscout backend
+            org.opencontainers.image.source=https://github.com/blockscout/blockscout
+            org.opencontainers.image.version=${{ env.BACKEND_TAG }}
+            org.opencontainers.image.revision=${{ env.BACKEND_COMMIT }}
+          build-args: |
+            RELEASE_VERSION=${{ env.BACKEND_VERSION }}
+            BLOCKSCOUT_VERSION=${{ env.BACKEND_TAG }}
+
+      - name: Attest backend provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be
+        with:
+          subject-name: ${{ env.BACKEND_IMAGE }}
+          subject-digest: ${{ steps.backend.outputs.digest }}
+          push-to-registry: true
+
+      - name: Build and publish frontend
+        id: frontend
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
+        with:
+          context: upstream/frontend
+          file: upstream/frontend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: mode=max
+          sbom: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:${{ env.FRONTEND_TAG }}
+            ${{ env.FRONTEND_IMAGE }}:${{ env.FRONTEND_COMMIT }}
+          labels: |
+            org.opencontainers.image.title=Xitcoin Blockscout frontend
+            org.opencontainers.image.source=https://github.com/blockscout/frontend
+            org.opencontainers.image.version=${{ env.FRONTEND_TAG }}
+            org.opencontainers.image.revision=${{ env.FRONTEND_COMMIT }}
+          build-args: |
+            GIT_COMMIT_SHA=${{ env.FRONTEND_COMMIT }}
+            GIT_TAG=${{ env.FRONTEND_TAG }}
+
+      - name: Attest frontend provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be
+        with:
+          subject-name: ${{ env.FRONTEND_IMAGE }}
+          subject-digest: ${{ steps.frontend.outputs.digest }}
+          push-to-registry: true
+
+      - name: Publish immutable digest summary
+        shell: bash
+        run: |
+          {
+            echo "## Published Blockscout images"
+            echo
+            echo '```text'
+            echo "${BACKEND_IMAGE}:${BACKEND_TAG}@${{ steps.backend.outputs.digest }}"
+            echo "${FRONTEND_IMAGE}:${FRONTEND_TAG}@${{ steps.frontend.outputs.digest }}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
