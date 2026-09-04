@@ -6,14 +6,14 @@ Reproducible Blockscout configuration and Xitcoin branding for the public EVM ex
 
 | Property | Value |
 |---|---|
-| Network | Xitcoin Testnet |
+| Network | Xitcoin Public Testnet |
 | EVM chain ID | `101089` |
 | Native currency | XTC |
 | Decimals | 18 |
 | Explorer | https://evm-explorer-testnet.xitcoin.org/ |
 | JSON-RPC | https://evm-rpc-testnet.xitcoin.org/ |
 
-Cosmos-style and EVM-style addresses coexist on Xitcoin Testnet. This does not imply a bridge or a second token: XTC is the native asset exposed through both interfaces.
+Cosmos-style and EVM-style addresses coexist on Xitcoin Public Testnet. This does not imply a bridge or a second token: XTC is the native asset exposed through both interfaces.
 
 Canonical public network configuration is maintained in [`xitcoin-org/testnets`](https://github.com/xitcoin-org/testnets). Node software is maintained in [`xitcoin-org/pos-chain`](https://github.com/xitcoin-org/pos-chain).
 
