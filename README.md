@@ -56,3 +56,15 @@ Security reports follow [`SECURITY.md`](SECURITY.md).
 ## License
 
 Original Xitcoin-authored configuration and documentation are available under the [MIT License](LICENSE). Blockscout images and other third-party components retain their upstream terms; see [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## Public deployment observed on 13 September 2026
+
+The public explorer serves backend **11.2.8**, the corrected frontend and Stats.
+See [deployment and recovery](docs/DEPLOYMENT.md), the
+[deployment inventory](docs/PUBLIC_DEPLOYMENT.json) and [Stats](docs/STATS.md).
+
+The checked-in Compose files and manual image-build workflow describe an earlier
+11.2.7 recipe. They are not the manifest of this accepted installation and must
+not be replayed over it. The public images were qualified separately; no new GHCR
+publication or complete distribution attestation is claimed. See the
+[remaining notice provenance](docs/NOTICE_PROVENANCE.md).
