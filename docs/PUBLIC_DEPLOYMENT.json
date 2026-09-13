@@ -1,0 +1,68 @@
+{
+  "observed_at": "2026-09-13T11:59:53.747462+00:00",
+  "status": "COMPLETED_TARGETED_PUBLIC_ACTIVATION",
+  "testnet_ready": false,
+  "project": "xitcoin-upgrade-20260913t114659z",
+  "backend_version": "11.2.8",
+  "services": {
+    "db": {
+      "image": "sha256:e38411452a464af89e5adadb8d223bf53b898d47d6ef918b2d58c08707350449",
+      "ports": {
+        "5432/tcp": null
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "stats-db": {
+      "image": "sha256:e38411452a464af89e5adadb8d223bf53b898d47d6ef918b2d58c08707350449",
+      "ports": {
+        "5432/tcp": null
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "redis": {
+      "image": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+      "ports": {
+        "6379/tcp": null
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "backend": {
+      "image": "sha256:317c5a6b41b61a9c1379d4d74ca845565eb66c19dc8941b99cfff6b4e8add8f0",
+      "ports": {
+        "4000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "15100"
+          }
+        ]
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "stats": {
+      "image": "sha256:b99094d53dd04e3a3f9052f9748a68f8f1fcfa337fe79da5b6212978b8feb276",
+      "ports": {
+        "8050/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "15002"
+          }
+        ]
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "frontend": {
+      "image": "sha256:adfc2149a4d0c7a99da5d09dcc770a7975d6dec23a0a6a9a435504d9d0a83953",
+      "ports": {
+        "3000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "15101"
+          }
+        ]
+      },
+      "restart_policy": "unless-stopped"
+    }
+  },
+  "image_registry_publication": "Not performed for these exact images",
+  "distribution_attestation": "Incomplete; see NOTICE_PROVENANCE.md"
+}
